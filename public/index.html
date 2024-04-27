@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+  </head>
+  <body>
+    <main class="container">
+      <form>
+        <fieldset class="grid">
+          <input
+            value="adrian"
+            type="text"
+            name="username"
+            placeholder="Username"
+          />
+          <input
+            value="newey"
+            type="password"
+            name="password"
+            placeholder="Password"
+          />
+
+          <button type="submit">Log In</button>
+        </fieldset>
+      </form>
+      <pre><code id="data" style="display: none"></code></pre>
+    </main>
+
+    <script>
+      const $form = document.querySelector("form");
+      const $data = document.querySelector("#data");
+
+      $form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        $data.textContent = "";
+
+        const username = e.target.username.value;
+        const password = e.target.password.value;
+
+        const basicAuth = btoa(`${username}:${password}`);
+
+        const response = await fetch("/api/data", {
+          method: "GET",
+          headers: {
+            Authorization: `Basic ${basicAuth}`,
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.status === 200) {
+          $form.style.display = "none";
+          $data.style.display = "block";
+        } else {
+          $form.style.display = "block";
+          $data.style.display = "block";
+        }
+
+        $data.textContent = JSON.stringify(result, null, 2);
+      });
+    </script>
+  </body>
+</html>
